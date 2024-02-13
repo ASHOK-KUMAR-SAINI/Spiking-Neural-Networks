@@ -1,0 +1,35 @@
+ function [Whidd,Woutt]= weights_XOR(N_output,N_predicted, ...
+   V_mem_hid,V_mem_out,V_th_out,V_th_hid,N_out,Wout,Whid,N_IN,I_e_vect_In2)
+Del_Loss=(N_output-N_predicted);
+DOU=1/sum((25*abs(V_mem_out-V_th_out)+1).^2);
+for i=1:1:size(Wout,1)*size(Wout,2)
+    dw(i)=Del_Loss*DOU*N_out(i);
+end
+
+c=length(find(I_e_vect_In2>0))/size(I_e_vect_In2,1);
+% disp(c-N_output)
+% disp(c)
+
+if N_output-c<1 && N_output-c>-1
+Woutt=Wout;
+else
+W=Wout-0.1*dw;
+Woutt=W;
+end
+
+DIS=Woutt;
+DOS=sum((25*abs(V_mem_hid-V_th_hid)+1).^2,2);
+for i=1:1:size(Whid,1)
+for j=1:1:size(Whid,2)
+w(i,j)=Del_Loss*DOU*DIS(i)*(1/DOS(j))*N_IN(j);
+end
+Whiddd=Whid-30*w;
+Whidd=Whiddd;
+end
+
+
+
+
+
+
+

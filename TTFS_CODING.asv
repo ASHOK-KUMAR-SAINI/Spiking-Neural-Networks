@@ -1,0 +1,25 @@
+function spike_train = TTFS_CODING(image, t_vect)
+ 
+ a=size(image,1);
+ b=size(image,2);
+spike_train=zeros(a*b,length(t_vect));
+for i=1:1:a*b
+for t=1:1:length(t_vect)
+Threshold=exp(-t/6);
+if (image(i)/255)>Threshold
+    spike_train(i,t)=1;
+    break;
+else 
+    spike_train(i,t)=0;
+end
+end
+end
+
+spike_train=logical(spike_train);
+for trialCount = 1:size(spike_train,1)
+    spikePos = t_vect(spike_train(trialCount ,:));
+    for spikeCount = 1: length (spikePos)
+        plot(spikePos(spikeCount),trialCount,'ko','markerfacecolor','r') ;
+    end
+end
+ylim([0 size(spike_train,1)+1]);

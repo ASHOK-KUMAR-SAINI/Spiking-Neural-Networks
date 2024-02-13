@@ -1,0 +1,43 @@
+% Define parameters
+K = 8;                  % number of phases in a period
+T_period = ;        % duration of a period (in ms)
+T_step = 0.1;             % time step (in ms)
+I_input = 255/255;          % input current (normalized)
+
+% Calculate spike weights
+weights = 2.^(-1:-1:-K); % weight of each phase
+n_steps = K*T_period/T_step; % number of time steps in a period
+t_steps = (0:n_steps-1)*T_step; % time steps in a period
+spike_weights = repmat(weights, 1, n_steps); % spike weight for each time step
+%spike_weights = circshift(spike_weights, [0, mod(-1, K)]); % shift weights to start at phase 1
+
+% Convert input pixel value into spike train
+if I_input > 0
+    spike_train = zeros(1, 1000);
+    spike_train(1) = 1; % spike at first time step
+    for i = 2:1:K*n_steps
+        % calculate current phase and spike weight
+        phasee = mod(floor((i-1)/n_steps), K) + 1;
+        weight = spike_weights(i - n_steps*(phasee-1));
+        disp(weight)
+        % generate spike with weighted amplitude
+        I_spike = I_input*weight;
+        if rand(1,1) < I_spike*T_step
+            spike_train(i) = 1;
+        end
+    end
+else
+    spike_train = zeros(1, K*n_steps); % no spikes if input current is zero
+end
+
+% Determine spike timings
+spike_timings = find(spike_train)*T_step;
+
+% Plot spike train
+figure;
+%plot(spike_timings, ones(size(spike_timings)), '.', 'MarkerSize', 10);
+stem(spike_train)
+
+xlabel('Time (ms)');
+title('Input Spike Train');
+
